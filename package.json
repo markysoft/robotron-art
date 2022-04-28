@@ -43,7 +43,7 @@
       "afterAll"
     ],
     "ignore": [
-      "app/dist/**/*.js"
+      "src/recs/**/*.*"
     ]
   }  
 }
