@@ -43,7 +43,7 @@
       "afterAll"
     ],
     "ignore": [
-      "src/recs/**/*.*"
+      "src/recs/*.*"
     ]
   }  
 }
