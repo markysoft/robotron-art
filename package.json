@@ -1,0 +1,49 @@
+{
+  "name": "robotron-art",
+  "version": "1.0.0",
+  "description": "Generate line art from gameplay",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm run watch & npm run sync",
+    "watch": "watchify src/main.js -o static/bundle.js",
+    "sync": "browser-sync start --server --files static/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/markysoft/robotron-art.git"
+  },
+  "keywords": [
+    "html5",
+    "robotron",
+    "canvas",
+    "art"
+  ],
+  "author": "markysoft",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/markysoft/robotron-art/issues"
+  },
+  "homepage": "https://github.com/markysoft/robotron-art#readme",
+  "devDependencies": {
+    "standard": "17.0.0"
+  },
+  "dependencies": {
+    "browserify": "17.0.0",
+    "watchify": "4.0.0"
+  },
+  "standard": {
+    "globals": [
+      "describe",
+      "beforeEach",
+      "expect",
+      "test",
+      "afterEach",
+      "jest",
+      "beforeAll",
+      "afterAll"
+    ],
+    "ignore": [
+      "app/dist/**/*.js"
+    ]
+  }  
+}
