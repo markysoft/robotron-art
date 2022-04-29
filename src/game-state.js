@@ -1,9 +1,10 @@
 
-const game = require('./recs/roboyo1.inp.json')
+const game = require('./recs/robo68.inp.json')
 
 class GameState {
   constructor () {
     this.level = 1
+    this.levelData = []
     this.frameWidth = 292
     this.frameHeight = 240
     this.index = 0

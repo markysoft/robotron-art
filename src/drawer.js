@@ -1,5 +1,5 @@
 class Drawer {
-  constructor (width, height) {
+  constructor (width, height, document) {
     this.width = width
     this.height = height
     this.colours = [
@@ -20,6 +20,22 @@ class Drawer {
     this.resetColours()
     this.colourStep = 0.5
     this.selectedColour = 0
+    this.diedAt = []
+    this.initDefeat()
+  }
+
+  initDefeat () {
+    this.dcanvas = document.querySelector('#defeats')
+    this.dctx = this.dcanvas.getContext('2d')
+    this.dctx.fillStyle = 'black'
+
+    this.dctx.strokeStyle = 'red'
+    this.dctx.lineWidth = 1
+
+    this.dctx.fillRect(0, 0, this.dcanvas.width, this.dcanvas.height)
+    this.dctx.globalAlpha = 0.5
+
+    this.dctx.fillStyle = 'red'
   }
 
   resetColours () {
@@ -47,6 +63,11 @@ class Drawer {
   }
 
   drawDiePos (x, y, canvasData) {
+    this.diedAt.push({ x, y })
+
+    this.dctx.beginPath()
+    this.dctx.arc(x, y, 5, 0, Math.PI * 2, true)
+    this.dctx.fill()
     const red = { r: 255, g: 0, b: 0 }
     const size = 2
 
