@@ -1,6 +1,14 @@
 body {
     background-color:  #222222;
 }
+#content {
+    margin-left: 4px;
+    margin-right: 4px;
+}
+button {
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
 
 canvas {
     margin: 2px;

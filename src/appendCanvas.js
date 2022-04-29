@@ -14,8 +14,11 @@ function appendCanvas (level, width, height) {
   ctx.lineWidth = 1
 
   ctx.fillRect(0, 0, width, height)
+
   ctx.fillStyle = 'white'
   ctx.font = '12px Consolas'
+
+  ctx.fillText(`level: ${level}`, 4, height - 4)
   const canvasData = ctx.getImageData(0, 0, width, height)
   return { ctx, canvasData }
 }

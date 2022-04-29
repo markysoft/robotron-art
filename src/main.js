@@ -1,12 +1,12 @@
 
 const appendCanvas = require('./appendCanvas')
-const game = require('./recs/roboyo.inp.json')
-const { Drawer } = require('./draw-utils')
+const game = require('./recs/roboyo1.inp.json')
+const { Drawer } = require('./drawer')
 
 const totalFrames = game.length - 1
 const cWidth = 292
 const cHeight = 240
-const pause = 55
+const pause = 30
 const pointsPerFrame = 120
 let ctx
 
@@ -17,7 +17,7 @@ let y = cHeight / 2
 let lastX = x
 let lastY = y
 let index = 0
-let lastFrame
+let lastInput
 let canvasData
 exports.canvasData = canvasData
 
@@ -27,7 +27,9 @@ let level = 1
 function drawFrames () {
   let count = 0
   while (count < pointsPerFrame) {
-    drawFrame()
+    if (index < totalFrames) {
+      drawFrame()
+    }
     count++
   }
 
@@ -58,11 +60,11 @@ function drawFrame () {
   if (y < 4) {
     y = 4
   }
-  if (x > cWidth - 2) {
-    x = cWidth - 2
+  if (x > cWidth - 4) {
+    x = cWidth - 4
   }
-  if (y > cHeight - 4) {
-    y = cHeight - 4
+  if (y > cHeight - 6) {
+    y = cHeight - 6
   }
   if (lastX !== x || lastY !== y) {
     drawer.drawPixel(x, y, canvasData)
@@ -70,30 +72,49 @@ function drawFrame () {
 
   lastX = x
   lastY = y
-  index++
-  if (lastFrame && inp.f - lastFrame > pause) {
+  if (noInput(inp)) {
+    x = cWidth / 2
+    y = cHeight / 2
+    lastX = x
+    lastY = y
+    drawer.changeColour()
+  }
+
+  if (newLevel(inp)) {
     ctx.putImageData(canvasData, 0, 0)
-    ctx.fillText(`pause: ${inp.f - lastFrame}`, 4, cHeight - 4)
     changeLevel()
   }
-  lastFrame = inp.f
+
+  lastInput = inp
+  index++
 }
 
 function changeLevel () {
   level++
-  const cData = appendCanvas(level, cWidth, cHeight)
-  ctx = cData.ctx
-  canvasData = cData.canvasData
-  ctx.fillStyle = 'white'
-  x = cWidth / 2
-  y = cHeight / 2
-  lastX = x
-  lastY = y
+  initialiseLevel()
 
   drawer.resetColours()
 }
 
-async function start () {
+function initialiseLevel () {
+  const cData = appendCanvas(level, cWidth, cHeight)
+  ctx = cData.ctx
+  canvasData = cData.canvasData
+  x = cWidth / 2
+  y = cHeight / 2
+  lastX = x
+  lastY = y
+}
+
+function noInput (inp) {
+  return inp && lastInput && inp.f - lastInput.f > pause && !lastInput.p[0].includes('START1')
+}
+
+function newLevel (inp) {
+  return lastInput !== undefined && !lastInput.p[0].includes('START1') && inp.p[0].includes('START1')
+}
+
+function addButtonListener () {
   const button = document.querySelector('#play')
   button.addEventListener('mousedown', e => {
     running = !running
@@ -101,9 +122,11 @@ async function start () {
       window.requestAnimationFrame(drawFrames)
     }
   })
-  const cData = appendCanvas(level, cWidth, cHeight)
-  ctx = cData.ctx
-  canvasData = cData.canvasData
+}
+
+async function start () {
+  addButtonListener()
+  initialiseLevel()
 }
 
 window.addEventListener('load', start)
