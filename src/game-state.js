@@ -3,6 +3,7 @@ const game = require('./recs/roboyo1.inp.json')
 
 class GameState {
   constructor () {
+    this.level = 1
     this.frameWidth = 292
     this.frameHeight = 240
     this.index = 0
@@ -41,6 +42,10 @@ class GameState {
     }
   }
 
+  positionChanged () {
+    return this.lastX !== this.x || this.lastY !== this.y
+  }
+
   setStartPosition () {
     this.x = this.frameWidth / 2
     this.y = this.frameWidth / 2
@@ -53,6 +58,10 @@ class GameState {
     this.lastY = this.y
     this.lastInput = this.game[this.index]
     this.index++
+  }
+
+  gameInProgress () {
+    return this.index < this.totalFrames
   }
 }
 

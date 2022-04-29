@@ -26,20 +26,35 @@ class Drawer {
     this.selectedColour = 0
   }
 
-  setCanvasPoint (x, y, canvasData) {
+  setCanvasPoint (x, y, canvasData, col) {
     const idx = (x + y * this.width) * 4
-    const col = this.colours[this.selectedColour]
+    this.drawBlock(canvasData, idx, col)
+  }
+
+  drawBlock (canvasData, idx, col) {
     canvasData.data[idx + 0] = col.r
     canvasData.data[idx + 1] = col.g
     canvasData.data[idx + 2] = col.b
-    canvasData.data[idx + 4 + 0] = col
+    canvasData.data[idx + 4 + 0] = col.r
     canvasData.data[idx + 4 + 1] = col.g
     canvasData.data[idx + 4 + 2] = col.b
   }
 
   drawPixel (x, y, canvasData) {
-    this.setCanvasPoint(x, y, canvasData)
-    this.setCanvasPoint(x, y + 1, canvasData)
+    const col = this.colours[this.selectedColour]
+    this.setCanvasPoint(x, y, canvasData, col)
+    this.setCanvasPoint(x, y + 1, canvasData, col)
+  }
+
+  drawDiePos (x, y, canvasData) {
+    const red = { r: 255, g: 0, b: 0 }
+    const size = 2
+
+    for (let xPos = x - size; xPos < x + size; xPos++) {
+      for (let yPos = y - size; yPos <= y + size; yPos++) {
+        this.setCanvasPoint(xPos, yPos, canvasData, red)
+      }
+    }
   }
 
   changeColour () {

@@ -6,28 +6,25 @@ const { GameState } = require('./game-state')
 const pause = 30
 const pointsPerFrame = 120
 let ctx
+let canvasData
+
+let running = false
 
 const gameState = new GameState()
 
-const drawer = new Drawer(gameState.frameWidth, gameState.frameWidth)
-
-let canvasData
-exports.canvasData = canvasData
-
-let running = false
-let level = 1
+const drawer = new Drawer(gameState.frameWidth, gameState.frameHeight)
 
 function drawFrames () {
   let count = 0
   while (count < pointsPerFrame) {
-    if (gameState.index < gameState.totalFrames) {
+    if (gameState.gameInProgress()) {
       drawFrame()
     }
     count++
   }
 
   ctx.putImageData(canvasData, 0, 0)
-  if (running && gameState.index < gameState.totalFrames) {
+  if (running && gameState.gameInProgress()) {
     window.requestAnimationFrame(drawFrames)
   }
 }
@@ -35,16 +32,18 @@ function drawFrames () {
 function drawFrame () {
   const inp = gameState.game[gameState.index]
   gameState.movePlayer()
-  if (gameState.lastX !== gameState.x || gameState.lastY !== gameState.y) {
+  if (gameState.positionChanged()) {
     drawer.drawPixel(gameState.x, gameState.y, canvasData)
   }
 
   if (noInput(inp)) {
+    drawer.drawDiePos(gameState.x, gameState.y, canvasData)
     gameState.setStartPosition()
     drawer.changeColour()
   }
 
   if (newLevel(inp)) {
+    // write remaining image data before changing to new canvas
     ctx.putImageData(canvasData, 0, 0)
     changeLevel()
   }
@@ -53,12 +52,12 @@ function drawFrame () {
 }
 
 function changeLevel () {
-  level++
+  gameState.level++
   initialiseLevel()
 }
 
 function initialiseLevel () {
-  const cData = appendCanvas(level, gameState.frameWidth, gameState.frameHeight)
+  const cData = appendCanvas(gameState.level, gameState.frameWidth, gameState.frameHeight)
   ctx = cData.ctx
   canvasData = cData.canvasData
   gameState.setStartPosition()
