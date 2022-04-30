@@ -2,7 +2,7 @@ const { Drawer } = require('./drawer')
 const { Canvaser } = require('./Canvaser')
 const { GameState } = require('./game-state')
 
-const pointsPerFrame = 120
+const pointsPerFrame = 240
 let canvasData
 
 let running = false

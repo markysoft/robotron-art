@@ -1,10 +1,10 @@
-
-const game = require('./recs/robo68.inp.json')
+// 198, 83
+const game = require('./recs/robo250.inp.json')
 
 class GameState {
   constructor () {
     this.level = 1
-    this.pause = 30
+    this.pause = 50
     this.levelData = []
     this.frameWidth = 292
     this.frameHeight = 240
