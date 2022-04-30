@@ -49,7 +49,7 @@ function drawFrame () {
     ctx.putImageData(canvasData, 0, 0)
     const levelData = gameState.levelData[gameState.level]
     if (gameState.levelData[gameState.level]) {
-      ctx.fillText(`level: ${gameState.level}, lives lost ${levelData.ll}, took: ${Math.round((inp.f - levelData.s) / 60)}s`, 4, 250 - 4)
+      ctx.fillText(`level: ${gameState.level}, lives lost: ${levelData.ll}, time: ${Math.round((inp.f - levelData.s) / 60)}s`, 4, 250 - 4)
     } else {
       ctx.fillText(`level: ${gameState.level}`, 4, 250 - 4)
     }
