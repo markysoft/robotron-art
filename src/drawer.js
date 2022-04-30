@@ -36,7 +36,7 @@ class Drawer {
     this.dctx.lineWidth = 1
 
     this.dctx.fillRect(0, 0, this.dcanvas.width, this.dcanvas.height)
-    this.dctx.globalAlpha = 0.5
+    this.dctx.globalAlpha = 0.2
 
     this.dctx.fillStyle = 'red'
   }
@@ -68,8 +68,16 @@ class Drawer {
   drawDiePos (x, y, canvasData) {
     this.diedAt.push({ x, y })
     this.dctx.beginPath()
-    this.dctx.arc(x * this.scale, y * this.scale, 5 * this.scale, 0, Math.PI * 2, true)
+    this.dctx.arc(x * this.scale, y * this.scale, 6 * this.scale, 0, Math.PI * 2, true)
     this.dctx.fill()
+    const red = { r: 255, g: 0, b: 0 }
+    const size = 2
+
+    for (let xPos = x - size; xPos < x + size; xPos++) {
+      for (let yPos = y - size; yPos <= y + size; yPos++) {
+        this.setCanvasPoint(xPos, yPos, canvasData, red)
+      }
+    }
   }
 
   changeColour () {

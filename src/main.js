@@ -22,6 +22,10 @@ function drawFrames () {
   }
 
   canvaser.ctx.putImageData(canvasData, 0, 0)
+  if (gameState.gameInProgress() === false) {
+    const inp = gameState.game[gameState.index]
+    canvaser.finaliseCanvas(canvasData, gameState, inp)
+  }
   if (running && gameState.gameInProgress()) {
     window.requestAnimationFrame(drawFrames)
   }
