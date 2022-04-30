@@ -254,8 +254,7 @@ let drawer
 let canvaser
 
 function drawFrames () {
-  let count = 0
-  while (count < pointsPerFrame) {
+  for (let count = 0; count < pointsPerFrame; count++) {
     if (gameState.gameInProgress()) {
       drawFrame()
     } else {
@@ -263,7 +262,6 @@ function drawFrames () {
       drawer.drawDiePos(gameState.x, gameState.y, canvasData)
       break
     }
-    count++
   }
 
   canvaser.ctx.putImageData(canvasData, 0, 0)
