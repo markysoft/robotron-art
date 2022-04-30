@@ -1,5 +1,5 @@
 class Drawer {
-  constructor (width, height, document) {
+  constructor (width, height) {
     this.width = width
     this.height = height
     this.colours = [

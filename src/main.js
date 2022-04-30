@@ -1,16 +1,14 @@
-
-const appendCanvas = require('./appendCanvas')
 const { Drawer } = require('./drawer')
+const { Canvaser } = require('./Canvaser')
 const { GameState } = require('./game-state')
 
-const pause = 30
 const pointsPerFrame = 120
-let ctx
 let canvasData
 
 let running = false
 let gameState
 let drawer
+let canvaser
 
 function drawFrames () {
   let count = 0
@@ -18,13 +16,14 @@ function drawFrames () {
     if (gameState.gameInProgress()) {
       drawFrame()
     } else {
+      // draw final end position
       drawer.drawDiePos(gameState.x, gameState.y, canvasData)
       break
     }
     count++
   }
 
-  ctx.putImageData(canvasData, 0, 0)
+  canvaser.ctx.putImageData(canvasData, 0, 0)
   if (running && gameState.gameInProgress()) {
     window.requestAnimationFrame(drawFrames)
   }
@@ -37,61 +36,31 @@ function drawFrame () {
     drawer.drawPixel(gameState.x, gameState.y, canvasData)
   }
 
-  if (noInput(inp)) {
+  if (gameState.noInput()) {
     drawer.drawDiePos(gameState.x, gameState.y, canvasData)
     gameState.levelData[gameState.level].ll++
     gameState.setStartPosition()
     drawer.changeColour()
   }
 
-  if (newLevel(inp)) {
+  if (gameState.newLevel()) {
     // write remaining image data before changing to new canvas
-    ctx.putImageData(canvasData, 0, 0)
-    const levelData = gameState.levelData[gameState.level]
-    if (gameState.levelData[gameState.level]) {
-      ctx.fillText(`level: ${gameState.level}, lives lost: ${levelData.ll}, time: ${Math.round((inp.f - levelData.s) / 60)}s`, 4, 250 - 4)
-    } else {
-      ctx.fillText(`level: ${gameState.level}`, 4, 250 - 4)
-    }
-
-    gameState.levelData[gameState.level] = {
-      s: inp.f,
-      e: undefined,
-      ll: 0
-    }
-    changeLevel(inp)
+    canvaser.finaliseCanvas(canvasData, gameState, inp)
+    changeLevel()
   }
 
   gameState.endMove()
 }
 
-function changeLevel (inp) {
-  if (gameState.levelData[gameState]) {
-    gameState.levelData[gameState].e = inp.f
-  }
-  gameState.level++
-  gameState.levelData[gameState.level] = {
-    s: inp.f,
-    e: undefined,
-    ll: 0
-  }
+function changeLevel () {
+  gameState.changeLevel()
   initialiseLevel()
 }
 
 function initialiseLevel () {
-  const cData = appendCanvas(gameState.level, gameState.frameWidth, gameState.frameHeight)
-  ctx = cData.ctx
-  canvasData = cData.canvasData
+  canvasData = canvaser.appendCanvas(gameState.level)
   gameState.setStartPosition()
   drawer.resetColours()
-}
-
-function noInput (inp) {
-  return inp && gameState.lastInput && inp.f - gameState.lastInput.f > pause && !gameState.lastInput.p[0].includes('START1')
-}
-
-function newLevel (inp) {
-  return gameState.lastInput !== undefined && !gameState.lastInput.p[0].includes('START1') && inp.p[0].includes('START1')
 }
 
 function addButtonListener () {
@@ -106,8 +75,8 @@ function addButtonListener () {
 
 async function start () {
   gameState = new GameState()
-
   drawer = new Drawer(gameState.frameWidth, gameState.frameHeight, document)
+  canvaser = new Canvaser(gameState.frameWidth, gameState.frameHeight, document)
   addButtonListener()
   initialiseLevel()
 }

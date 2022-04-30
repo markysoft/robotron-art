@@ -4,6 +4,7 @@ const game = require('./recs/robo68.inp.json')
 class GameState {
   constructor () {
     this.level = 1
+    this.pause = 30
     this.levelData = []
     this.frameWidth = 292
     this.frameHeight = 240
@@ -15,7 +16,7 @@ class GameState {
   }
 
   movePlayer () {
-    const inp = game[this.index]
+    const inp = this.game[this.index]
     for (const action of inp.p[0]) {
       if (action === 'LEFT') {
         this.x -= 2
@@ -63,6 +64,30 @@ class GameState {
 
   gameInProgress () {
     return this.index < this.totalFrames
+  }
+
+  noInput () {
+    const inp = this.game[this.index]
+    return inp && this.lastInput && inp.f - this.lastInput.f > this.pause && !this.lastInput.p[0].includes('START1')
+  }
+
+  newLevel () {
+    const inp = this.game[this.index]
+    return this.lastInput !== undefined && !this.lastInput.p[0].includes('START1') && inp.p[0].includes('START1')
+  }
+
+  changeLevel () {
+    const inp = this.game[this.index]
+
+    if (this.levelData[this.level]) {
+      this.levelData[this.level].e = inp.f
+    }
+    this.level++
+    this.levelData[this.level] = {
+      s: inp.f,
+      e: undefined,
+      ll: 0
+    }
   }
 }
 
