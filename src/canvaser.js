@@ -1,51 +1,55 @@
 class Canvaser {
   constructor (width, height, document) {
     this.width = width
+    this.cWidth = width
     this.height = height
+    this.cHeight = height + 16
     this.document = document
-    this.ctx = undefined
-    this.canvas = undefined
+    this.padding = 2
+    this.canvas = document.querySelector('#levels')
+    this.canvas.width = ((this.cWidth + this.padding) * 5) - this.padding
+    this.canvas.height = ((this.cHeight + this.padding) * 250) / 5
+    this.ctx = this.canvas.getContext('2d')
+    this.xOffset = this.padding
+    this.yOffset = this.padding
   }
 
   appendCanvas (level) {
-    const canv = document.createElement('canvas')
-    canv.id = 'cvs' + level
-    canv.width = this.width
-    canv.height = this.height + 10
-
-    document.body.appendChild(canv)
-
-    this.canvas = document.querySelector('#cvs' + level)
-    this.ctx = this.setupContext(this.canvas, level)
-    const canvasData = this.ctx.getImageData(0, 0, canv.width, canv.height)
+    if (level > 1) {
+      this.xOffset += this.cWidth + this.padding
+      if ((level - 1) % 5 === 0) {
+        this.yOffset += this.cHeight + this.padding
+        this.xOffset = this.padding
+      }
+    }
+    this.ctx = this.setupContext()
+    const canvasData = this.ctx.getImageData(this.xOffset, this.yOffset, this.cWidth, this.cHeight)
     return canvasData
   }
 
-  finaliseCanvas (canvasData, gameState, inp) {
-    this.ctx.putImageData(canvasData, 0, 0)
+  finaliseCanvas (canvasData, gameState) {
+    const inp = gameState.game[gameState.index]
+    this.ctx.putImageData(canvasData, this.xOffset, this.yOffset)
     const levelData = gameState.levelData[gameState.level]
     if (gameState.levelData[gameState.level]) {
       const seconds = Math.round((inp.f - levelData.s) / 60)
-      this.ctx.fillText(`level: ${gameState.level}, lives lost: ${levelData.ll}, time: ${seconds}s`, 4, this.canvas.height - 4)
+      this.ctx.fillText(`level: ${gameState.level}, lives lost: ${levelData.ll}, time: ${seconds}s`, this.xOffset + 4, this.yOffset + this.cHeight - 4)
     } else {
-      this.ctx.fillText(`level: ${gameState.level}`, 4, this.canvas.height - 4)
+      this.ctx.fillText(`level: ${gameState.level}`, this.xOffset + 4, this.yOffset + this.cHeight - 4)
     }
   }
 
-  setupContext (canvas, level) {
-    const ctx = canvas.getContext('2d')
-    ctx.fillStyle = 'black'
+  setupContext () {
+    const ctx = this.canvas.getContext('2d')
     ctx.fillStyle = 'black'
 
     ctx.strokeStyle = 'yellow'
     ctx.lineWidth = 1
 
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    ctx.fillRect(this.xOffset, this.yOffset, this.cWidth, this.cHeight)
 
     ctx.fillStyle = 'white'
     ctx.font = '12px Consolas'
-
-    ctx.fillText(`level: ${level}`, 4, canvas.height - 4)
     return ctx
   }
 }

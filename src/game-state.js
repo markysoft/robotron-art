@@ -1,9 +1,8 @@
-// 198, 83
 const game = require('./recs/robo250.inp.json')
 
 class GameState {
   constructor () {
-    this.level = 1
+    this.level = 0
     this.pause = 50
     this.levelData = []
     this.frameWidth = 292
@@ -73,7 +72,7 @@ class GameState {
 
   newLevel () {
     const inp = this.game[this.index]
-    return this.lastInput !== undefined && !this.lastInput.p[0].includes('START1') && inp.p[0].includes('START1')
+    return inp.p[0].includes('START1') && (this.lastInput === undefined || !this.lastInput.p[0].includes('START1'))
   }
 
   changeLevel () {

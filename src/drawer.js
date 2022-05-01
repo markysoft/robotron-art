@@ -59,7 +59,7 @@ class Drawer {
     canvasData.data[idx + 4 + 2] = col.b
   }
 
-  drawPixel (x, y, canvasData) {
+  drawPlayer (x, y, canvasData) {
     const col = this.colours[this.selectedColour]
     this.setCanvasPoint(x, y, canvasData, col)
     this.setCanvasPoint(x, y + 1, canvasData, col)

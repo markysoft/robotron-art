@@ -2,7 +2,7 @@ const { Drawer } = require('./drawer')
 const { Canvaser } = require('./Canvaser')
 const { GameState } = require('./game-state')
 
-const pointsPerFrame = 240
+const pointsPerFrame = 480
 let canvasData
 
 let running = false
@@ -21,21 +21,22 @@ function drawFrames () {
     }
   }
 
-  canvaser.ctx.putImageData(canvasData, 0, 0)
-  if (gameState.gameInProgress() === false) {
-    const inp = gameState.game[gameState.index]
-    canvaser.finaliseCanvas(canvasData, gameState, inp)
+  canvaser.ctx.putImageData(canvasData, canvaser.xOffset, canvaser.yOffset)
+
+  if (!gameState.gameInProgress()) {
+    // game ended, write last level details
+    canvaser.finaliseCanvas(canvasData, gameState)
   }
+
   if (running && gameState.gameInProgress()) {
     window.requestAnimationFrame(drawFrames)
   }
 }
 
 function drawFrame () {
-  const inp = gameState.game[gameState.index]
   gameState.movePlayer()
   if (gameState.positionChanged()) {
-    drawer.drawPixel(gameState.x, gameState.y, canvasData)
+    drawer.drawPlayer(gameState.x, gameState.y, canvasData)
   }
 
   if (gameState.noInput()) {
@@ -47,7 +48,7 @@ function drawFrame () {
 
   if (gameState.newLevel()) {
     // write remaining image data before changing to new canvas
-    canvaser.finaliseCanvas(canvasData, gameState, inp)
+    canvaser.finaliseCanvas(canvasData, gameState)
     changeLevel()
   }
 
